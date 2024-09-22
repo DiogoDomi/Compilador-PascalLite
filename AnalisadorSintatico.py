@@ -125,7 +125,7 @@ class AnalisadorSintatico():
         continuar = True
         self.consome(Atomos.BEGIN.value)
         self.comando()
-        while (continuar != False):
+        while (continuar):
             if (self.lookahead.tipo == Atomos.PONT_VIRG.value):
                 self.consome(Atomos.PONT_VIRG.value)
             continuar = self.comando()
