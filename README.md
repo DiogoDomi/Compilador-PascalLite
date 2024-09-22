@@ -2,7 +2,8 @@
 
 Primeiras impressões do projeto:
 
-Até o momento, foram implementadas apenas duas fases do compilador,
+Até o momento, foram implementadas apenas duas fases do compilador:
+
 Analisador Léxico, onde ocorrerá a análise léxica da gramática da linguagem,
 ou seja, será responsável por analisar palavras reservadas, palavras permitidas,
 tipos de caracteres e strings permitidas na linguagem.;
