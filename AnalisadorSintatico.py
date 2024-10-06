@@ -269,6 +269,8 @@ class AnalisadorSintatico():
     def fator(self):
         match (self.lookahead.tipo):
             case Atomos.IDENTIF.value:
+                endereco = self.busca_tabela_simbolo(self.lookahead.lexema)
+                print(f"\t CRVL {endereço}")
                 self.consome(Atomos.IDENTIF.value)
             case Atomos.NUM.value:
                 self.consome(Atomos.NUM.value)
@@ -276,10 +278,3 @@ class AnalisadorSintatico():
                 self.consome(Atomos.PAR_ESQ.value)
                 self.expressao()
                 self.consome(Atomos.PAR_DIR.value)
-            case Atomos.TRUE.value:
-                self.consome(Atomos.TRUE.value)
-            case Atomos.FALSE.value:
-                self.consome(Atomos.FALSE.value)
-            case Atomos.NOT.value:
-                self.consome(Atomos.NOT.value)
-                self.fator()
