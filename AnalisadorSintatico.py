@@ -107,7 +107,7 @@ class AnalisadorSintatico():
     # se a sintaxe da lista de identificadores
     # está correta
     def lista_de_identificadores(self):
-        self.analisador_semantico.criar_variavel(self.lookahead)
+        self.analisador_semantico.armazenar_variavel(self.lookahead)
         self.consome(Atomos.IDENTIF.value)
         while (self.lookahead.tipo == Atomos.VIRGULA.value):
             self.consome(Atomos.VIRGULA.value)
@@ -190,10 +190,16 @@ class AnalisadorSintatico():
     # Declaração do método que irá validar
     # se a sintaxe do comando WHILE está correta
     def comando_while(self):
+        L1 = self.analisador_semantico.proximo_rotulo()
+        L2 = self.analisador_semantico.proximo_rotulo()
         self.consome(Atomos.WHILE.value)
+        print(f"L{L1}: \tNADA")
         self.expressao()
+        print(f"\tDSVF L{L2}")
         self.consome(Atomos.DO.value)
         self.comando()
+        print(f"\tDSVS L{L1}")
+        print(f"L{L2}: \tNADA")
 
     # Declaração do método que irá validar
     # se a sintaxe do comando READ está correta
@@ -281,8 +287,14 @@ class AnalisadorSintatico():
     def fator(self):
         match (self.lookahead.tipo):
             case Atomos.IDENTIF.value:
+                endereco = self.analisador_semantico.buscar_endereco(self.lookahead)
+                if (endereco is None):
+                    print(f"Erro semântico: a Variável '{self.lookahead.lexema}' não foi encontrada.")
+                    sys.exit(1)
+                print(f"\tCRVL {endereco}")
                 self.consome(Atomos.IDENTIF.value)
             case Atomos.NUM.value:
+                print(f"\tCRCT {self.lookahead.lexema}")
                 self.consome(Atomos.NUM.value)
             case Atomos.PAR_ESQ.value:
                 self.consome(Atomos.PAR_ESQ.value)
