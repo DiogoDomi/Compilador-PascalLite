@@ -1,5 +1,6 @@
 from AnalisadorLexico import AnalisadorLexico
 from AnalisadorSintatico import AnalisadorSintatico
+from AnalisadorSemantico import AnalisadorSemantico
 import sys
 
 # Definindo mensagens que irão aparecer para 
@@ -28,7 +29,7 @@ def ler_arquivo():
 def main():
     buffer = ler_arquivo()
     analisador_lexico = AnalisadorLexico(buffer)
-    analisador_sintatico = AnalisadorSintatico(analisador_lexico)
+    analisador_sintatico = AnalisadorSintatico(analisador_lexico, AnalisadorSemantico())
     analisador_sintatico.sintatico()
     analisador_sintatico.imprimir_resultado()
 

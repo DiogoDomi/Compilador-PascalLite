@@ -1,5 +1,6 @@
 from Atomos import Atomos
 from AnalisadorLexico import AnalisadorLexico
+from AnalisadorSemantico import AnalisadorSemantico
 from Atomo import Atomo
 import sys
 
@@ -16,10 +17,12 @@ atomo_message = [
         ]
 
 class AnalisadorSintatico():
-    def __init__(self, analisador_lexico : AnalisadorLexico):
+    def __init__(self, analisador_lexico : AnalisadorLexico,
+                 analisador_semantico : AnalisadorSemantico):
         self.analisador_lexico = analisador_lexico
         self.lookahead = self.analisador_lexico.proximo_atomo()
         self.linhas_processadas = 0
+        self.analisador_semantico = analisador_semantico
 
     # Declaração do método que irá consumir o atomo
     # recebido, comparar se o tipo do atomo é o mesmo
@@ -34,13 +37,6 @@ class AnalisadorSintatico():
         elif (atomo_tipo != Atomos.EOS.value):
             self.imprimir_atomo(self.lookahead)
             self.lookahead = self.analisador_lexico.proximo_atomo()
-
-    # Declaração do método que irá iniciar a
-    # análise sintática a partir do método
-    # proximo_atomo() do analisador léxico
-    def sintatico(self):
-        self.programa()
-        self.consome(Atomos.EOS.value)
 
     # Declaração do método que irá imprimir
     # cada átomo que foi analisado e está
@@ -60,6 +56,13 @@ class AnalisadorSintatico():
     # a quantidade de linhas analisadas
     def imprimir_resultado(self):
         print(f"{self.linhas_processadas} linhas analisadas, programa sintaticamente correto.")
+
+    # Declaração do método que irá iniciar a
+    # análise sintática a partir do método
+    # proximo_atomo() do analisador léxico
+    def sintatico(self):
+        self.programa()
+        self.consome(Atomos.EOS.value)
 
     # Declaração do método que irá validar
     # se a sintaxe do programa está correta
@@ -104,6 +107,7 @@ class AnalisadorSintatico():
     # se a sintaxe da lista de identificadores
     # está correta
     def lista_de_identificadores(self):
+        self.analisador_semantico.criar_variavel(self.lookahead)
         self.consome(Atomos.IDENTIF.value)
         while (self.lookahead.tipo == Atomos.VIRGULA.value):
             self.consome(Atomos.VIRGULA.value)
@@ -158,16 +162,20 @@ class AnalisadorSintatico():
     # Declaração do método que irá validar
     # se a sintaxe da atribuição está correta
     def atribuicao(self):
-        self.consome(Atomos.IDENTIF.value)
-        self.consome(Atomos.ATRIB.value)
-        self.expressao()
-        if (self.lookahead.tipo != Atomos.PONT_VIRG.value and self.lookahead.tipo == Atomos.ELSE.value):
-            pass
-        elif (self.lookahead.tipo != Atomos.PONT_VIRG.value and self.lookahead.tipo == Atomos.END.value):
-            pass
+        if (self.analisador_semantico.variavel_existe(self.lookahead)):
+            self.consome(Atomos.IDENTIF.value)
+            self.consome(Atomos.ATRIB.value)
+            self.expressao()
+            if (self.lookahead.tipo != Atomos.PONT_VIRG.value and self.lookahead.tipo == Atomos.ELSE.value):
+                pass
+            elif (self.lookahead.tipo != Atomos.PONT_VIRG.value and self.lookahead.tipo == Atomos.END.value):
+                pass
+            else:
+                self.consome(Atomos.PONT_VIRG.value)
         else:
-            self.consome(Atomos.PONT_VIRG.value)
-        
+            print(f"Erro semântico: a Variável '{self.lookahead.lexema}' não foi declarada anteriormente.")
+            sys.exit(1)
+            
     # Declaração do método que irá validar
     # se a sintaxe do comando IF está correta
     def comando_if(self):
@@ -243,6 +251,10 @@ class AnalisadorSintatico():
     # Declaração do método que irá validar
     # se a sintaxe do termo está correta
     def termo(self):
+        if (self.lookahead.tipo == Atomos.IDENTIF.value):
+            if (not self.analisador_semantico.variavel_existe(self.lookahead)):
+                print(f"Erro semântico: a Variável '{self.lookahead.lexema}' não foi declarada anteriormente.")
+                sys.exit(1)
         self.fator()
         while (self.lookahead.tipo in
                 [Atomos.MULOP.value, Atomos.DIV.value,
@@ -269,8 +281,6 @@ class AnalisadorSintatico():
     def fator(self):
         match (self.lookahead.tipo):
             case Atomos.IDENTIF.value:
-                endereco = self.busca_tabela_simbolo(self.lookahead.lexema)
-                print(f"\t CRVL {endereço}")
                 self.consome(Atomos.IDENTIF.value)
             case Atomos.NUM.value:
                 self.consome(Atomos.NUM.value)
