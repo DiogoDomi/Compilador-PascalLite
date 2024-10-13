@@ -67,6 +67,7 @@ class AnalisadorSintatico():
     # Declaração do método que irá validar
     # se a sintaxe do programa está correta
     def programa(self):
+        print("INPP")
         self.consome(Atomos.PROGRAM.value)
         self.consome(Atomos.IDENTIF.value)
         while (self.lookahead.tipo == Atomos.IDENTIF.value):
@@ -193,13 +194,13 @@ class AnalisadorSintatico():
         L1 = self.analisador_semantico.proximo_rotulo()
         L2 = self.analisador_semantico.proximo_rotulo()
         self.consome(Atomos.WHILE.value)
-        print(f"L{L1}: \tNADA")
+        print(f"L{L1}: NADA")
         self.expressao()
-        print(f"\tDSVF L{L2}")
+        print(f"DSVF L{L2}")
         self.consome(Atomos.DO.value)
         self.comando()
-        print(f"\tDSVS L{L1}")
-        print(f"L{L2}: \tNADA")
+        print(f"DSVS L{L1}")
+        print(f"L{L2}: NADA")
 
     # Declaração do método que irá validar
     # se a sintaxe do comando READ está correta
@@ -291,10 +292,10 @@ class AnalisadorSintatico():
                 if (endereco is None):
                     print(f"Erro semântico: a Variável '{self.lookahead.lexema}' não foi encontrada.")
                     sys.exit(1)
-                print(f"\tCRVL {endereco}")
+                print(f"CRVL {endereco}")
                 self.consome(Atomos.IDENTIF.value)
             case Atomos.NUM.value:
-                print(f"\tCRCT {self.lookahead.lexema}")
+                print(f"CRCT {self.lookahead.lexema}")
                 self.consome(Atomos.NUM.value)
             case Atomos.PAR_ESQ.value:
                 self.consome(Atomos.PAR_ESQ.value)
