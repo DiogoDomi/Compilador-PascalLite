@@ -19,7 +19,7 @@ def ler_arquivo():
     if len(sys.argv) > 1:
         nome_arquivo = sys.argv[1]
     else:
-        nome_arquivo = "teste.pas"
+        nome_arquivo = "teste11.pas"
 
     arquivo = open(nome_arquivo)
     buffer = arquivo.read()

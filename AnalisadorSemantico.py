@@ -1,16 +1,18 @@
 from Atomo import Atomo
+#import sys
 
 class AnalisadorSemantico:
     def __init__(self):
         self.tabela = {}
         self.endereco = 0
+        self.rotulo = 0
 
     # Método responsável por verificar se
     # o lexema (variável) existe e se está
     # presenta na tabela de símbolos
     def variavel_existe(self, atomo: Atomo):
         for value in self.tabela.values():
-            if (value[0] == atomo.lexema):
+            if (value == atomo.lexema):
                 return True
         return False
 
@@ -22,8 +24,11 @@ class AnalisadorSemantico:
         if (not self.variavel_existe(atomo)):
             self.tabela[self.endereco] = atomo.lexema
             self.endereco += 1
-        else:
-            print(f"Erro semântico: Variável '{atomo.lexema}' já foi declarada anteriormente.")
+            return True
+        return False
+        #else:
+        #    print(f"Erro semântico: Variável '{atomo.lexema}' já foi declarada anteriormente.")
+        #    sys.exit(1)
 
     # Método responsável por buscar o endereço
     # do lexema (variável) na tabela a partir
@@ -35,5 +40,6 @@ class AnalisadorSemantico:
         return None
 
     def proximo_rotulo(self):
-        pass
+        self.rotulo += 1
+        return self.rotulo
 

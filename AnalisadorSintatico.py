@@ -113,13 +113,15 @@ class AnalisadorSintatico():
     # se a sintaxe da lista de identificadores
     # está correta
     def lista_de_identificadores(self):
-        self.analisador_semantico.armazenar_variavel(self.lookahead)
+        armazenar = self.analisador_semantico.armazenar_variavel(self.lookahead)
         self.consome(Atomos.IDENTIF.value)
-        self.amem += 1
-        while (self.lookahead.tipo == Atomos.VIRGULA.value):
+        if (armazenar):
             self.amem += 1
+        while (self.lookahead.tipo == Atomos.VIRGULA.value):
             self.consome(Atomos.VIRGULA.value)
+            self.analisador_semantico.armazenar_variavel(self.lookahead)
             self.consome(Atomos.IDENTIF.value)
+            self.amem += 1
 
     # Declaração do método que irá validar
     # se a sintaxe do tipo está correta
@@ -171,11 +173,11 @@ class AnalisadorSintatico():
     # se a sintaxe da atribuição está correta
     def atribuicao(self):
         if (self.analisador_semantico.variavel_existe(self.lookahead)):
-            armz = self.lookahead.lexema
+            endereco_armz = self.analisador_semantico.buscar_endereco(self.lookahead)
             self.consome(Atomos.IDENTIF.value)
             self.consome(Atomos.ATRIB.value)
             self.expressao()
-            print(f"ARMZ {armz}")
+            print(f"ARMZ {endereco_armz}")
             if (self.lookahead.tipo != Atomos.PONT_VIRG.value and self.lookahead.tipo == Atomos.ELSE.value):
                 pass
             elif (self.lookahead.tipo != Atomos.PONT_VIRG.value and self.lookahead.tipo == Atomos.END.value):
@@ -189,21 +191,33 @@ class AnalisadorSintatico():
     # Declaração do método que irá validar
     # se a sintaxe do comando IF está correta
     def comando_if(self):
+        L1 = self.analisador_semantico.proximo_rotulo()
+        L2 = self.analisador_semantico.proximo_rotulo()
         self.consome(Atomos.IF.value)
         self.expressao()
         self.consome(Atomos.THEN.value)
+        print(f"DSVF L{L1}")
         self.comando()
+        print(f"DSVS L{L2}")
+        print(f"L{L1}: NADA")
         if (self.lookahead.tipo == Atomos.ELSE.value):
             self.consome(Atomos.ELSE.value)
             self.comando()
+        print(f"L{L2}: NADA")
 
     # Declaração do método que irá validar
     # se a sintaxe do comando WHILE está correta
     def comando_while(self):
+        L1 = self.analisador_semantico.proximo_rotulo()
+        L2 = self.analisador_semantico.proximo_rotulo()
         self.consome(Atomos.WHILE.value)
+        print(f"L{L1}: NADA")
         self.expressao()
+        print(f"DSVF L{L2}")
         self.consome(Atomos.DO.value)
         self.comando()
+        print(f"DSVS L{L1}")
+        print(f"L{L2}: NADA")
 
     # Declaração do método que irá validar
     # se a sintaxe do comando READ está correta
@@ -244,6 +258,8 @@ class AnalisadorSintatico():
                     print("CMDG")
                 case (Atomos.RELOP_GE.value):
                     print("CMAG")
+                case (Atomos.RELOP_LE.value):
+                    print("CMEG")
 
     # Declaração do método que irá validar
     # se a sintaxe do RELOP está correta
@@ -252,19 +268,16 @@ class AnalisadorSintatico():
             match (self.lookahead.operador):
                 case (Atomos.RELOP_LT.value):
                     self.op = Atomos.RELOP_LT.value
-                    print("CMME")
                 case (Atomos.RELOP_GT.value):
                     self.op = Atomos.RELOP_GT.value
-                    print("CMMA")
                 case (Atomos.RELOP_EQ.value):
                     self.op = Atomos.RELOP_EQ.value
-                    print("CMIG")
                 case (Atomos.RELOP_NE.value):
                     self.op = Atomos.RELOP_NE.value
-                    print("CMDG")
                 case (Atomos.RELOP_GE.value):
                     self.op = Atomos.RELOP_GE.value
-                    print("CMAG")
+                case (Atomos.RELOP_LE.value):
+                    self.op = Atomos.RELOP_LE.value
             self.consome(Atomos.RELOP.value)
 
     # Declaração do método que irá validar
@@ -292,13 +305,15 @@ class AnalisadorSintatico():
                 [Atomos.ADDOP.value, Atomos.OR.value]):
             self.operador_de_adicao()
             self.termo()
-        match (self.op):
-            case (Atomos.ADDOP_SOMA.value):
-                print("SOMA")
-            case (Atomos.ADDOP_SUBT.value):
-                print("SUBT")
-            case (Atomos.OR.value):
-                print("DISJ")
+        if (self.op in [Atomos.ADDOP_SOMA.value, Atomos.ADDOP_SUBT.value, Atomos.OR.value]):
+            match (self.op):
+                case (Atomos.ADDOP_SOMA.value):
+                    print("SOMA")
+                case (Atomos.ADDOP_SUBT.value):
+                    print("SUBT")
+                case (Atomos.OR.value):
+                    print("DISJ")
+            self.op = 0
 
     # Declaração do método que irá validar
     # se a sintaxe do termo está correta
@@ -313,17 +328,20 @@ class AnalisadorSintatico():
                  Atomos.MOD.value, Atomos.AND.value]):
             self.operador_de_multiplicacao()
             self.fator()
-        match (self.op):
-            case (Atomos.MULOP_DIVI.value):
-                print("DIVI")
-            case (Atomos.MULOP_MULT.value):
-                print("MULT")
-            case (Atomos.MOD.value):
-                print("MOD")
-            case (Atomos.AND.value):
-                print("CONJ")
-            case (Atomos.DIV.value):
-                print("DIVI")
+        if (self.op in [Atomos.MULOP_DIVI.value, Atomos.MULOP_MULT.value, Atomos.MOD.value,
+                        Atomos.AND.value, Atomos.DIV.value]):
+            match (self.op):
+                case (Atomos.MULOP_DIVI.value):
+                    print("DIVI")
+                case (Atomos.MULOP_MULT.value):
+                    print("MULT")
+                case (Atomos.MOD.value):
+                    print("MOD")
+                case (Atomos.AND.value):
+                    print("CONJ")
+                case (Atomos.DIV.value):
+                    print("DIVI")
+            self.op = 0
 
     # Declaração do método que irá validar
     # se a sintaxe do MULOP está correta
@@ -332,10 +350,8 @@ class AnalisadorSintatico():
             match (self.lookahead.operador):
                 case (Atomos.MULOP_DIVI.value):
                     self.op = Atomos.MULOP_DIVI.value
-                    print("DIVI")
                 case (Atomos.MULOP_MULT.value):
                     self.op = Atomos.MULOP_MULT.value
-                    print("MULT")
             self.consome(Atomos.MULOP.value)
         else:
             match (self.lookahead.tipo):
