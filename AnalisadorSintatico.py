@@ -38,7 +38,8 @@ class AnalisadorSintatico():
             print(f"Encontrado: [{atomo_message[self.lookahead.tipo]}]")
             sys.exit(1)
         elif (atomo_tipo != Atomos.EOS.value):
-            self.imprimir_atomo(self.lookahead)
+            #self.imprimir_atomo(self.lookahead)
+            self.linhas_processadas = self.analisador_lexico.linha
             self.lookahead = self.analisador_lexico.proximo_atomo()
 
     # Declaração do método que irá iniciar a
@@ -89,6 +90,7 @@ class AnalisadorSintatico():
             self.declaracao()
             self.consome(Atomos.PONT_VIRG.value)
         print(f"AMEM {self.amem}")
+        self.amem = 0
         self.comando_composto()
 
     # Declaração do método que irá validar
@@ -220,13 +222,17 @@ class AnalisadorSintatico():
         print(f"L{L2}: NADA")
 
     # Declaração do método que irá validar
-    # se a sintaxe do comando READ está correta
+        # se a sintaxe do comando READ está correta
     def comando_de_entrada(self):
         self.consome(Atomos.READ.value)
         self.consome(Atomos.PAR_ESQ.value)
-        self.lista_de_identificadores()
-        self.consome(Atomos.PAR_DIR.value)
         print("LEIT")
+        if (self.lookahead.tipo == Atomos.IDENTIF.value):
+            endereco_armz = self.analisador_semantico.buscar_endereco(self.lookahead)
+            self.consome(Atomos.IDENTIF.value)
+            #self.lista_de_identificadores()
+            print(f"ARMZ {endereco_armz}")
+        self.consome(Atomos.PAR_DIR.value)
 
     # Declaração do método que irá validar
     # se a sintaxe do comando WRITE está correta
