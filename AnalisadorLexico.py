@@ -181,9 +181,9 @@ class AnalisadorLexico:
                     elif (char == "-"):
                         estado = 2
                 case 1:
-                    return Atomo(Atomos.ADDOP.value, lexema, 0, Atomos.ADDOP_SOMA, self.linha)
+                    return Atomo(Atomos.ADDOP.value, lexema, 0, Atomos.ADDOP_SOMA.value, self.linha)
                 case 2:
-                    return Atomo(Atomos.ADDOP.value, lexema, 0, Atomos.ADDOP_SUBT, self.linha)
+                    return Atomo(Atomos.ADDOP.value, lexema, 0, Atomos.ADDOP_SUBT.value, self.linha)
 
     # Declaração do metodo tratar_operador_de_multiplicacao, onde iremos
     # tratar os atomos em caso do retorno no metodo 
@@ -199,9 +199,9 @@ class AnalisadorLexico:
                     elif (char == "/"):
                         estado = 2
                 case 1:
-                    return Atomo(Atomos.MULOP.value, lexema, 0, Atomos.MULOP_MULT, self.linha)
+                    return Atomo(Atomos.MULOP.value, lexema, 0, Atomos.MULOP_MULT.value, self.linha)
                 case 2:
-                    return Atomo(Atomos.MULOP.value, lexema, 0, Atomos.MULOP_DIVI, self.linha)
+                    return Atomo(Atomos.MULOP.value, lexema, 0, Atomos.MULOP_DIVI.value, self.linha)
 
     # Declaração do metodo tratar_operador_de_atribuicao, onde iremos
     # tratar os atomos em caso do retorno no metodo
