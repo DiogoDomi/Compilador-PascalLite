@@ -1,7 +1,7 @@
-from Atomos import Atomos
-from AnalisadorLexico import AnalisadorLexico
-from AnalisadorSemantico import AnalisadorSemantico
-from Atomo import Atomo
+from .Atomos import Atomos
+from .AnalisadorLexico import AnalisadorLexico
+from .AnalisadorSemantico import AnalisadorSemantico
+from .Atomo import Atomo
 import sys
 
 # Definindo mensages que irão aparecer para cada
@@ -307,11 +307,9 @@ class AnalisadorSintatico():
         if (self.lookahead.tipo == Atomos.ADDOP.value):
             self.consome(Atomos.ADDOP.value)
         self.termo()
-        while (self.lookahead.tipo in
-                [Atomos.ADDOP.value, Atomos.OR.value]):
+        while (self.lookahead.tipo in [Atomos.ADDOP.value, Atomos.OR.value]):
             self.operador_de_adicao()
             self.termo()
-        if (self.op in [Atomos.ADDOP_SOMA.value, Atomos.ADDOP_SUBT.value, Atomos.OR.value]):
             match (self.op):
                 case (Atomos.ADDOP_SOMA.value):
                     print("SOMA")
@@ -329,13 +327,9 @@ class AnalisadorSintatico():
                 print(f"Erro semântico: a variável '{self.lookahead.lexema}' não foi declarada.")
                 sys.exit(1)
         self.fator()
-        while (self.lookahead.tipo in
-                [Atomos.MULOP.value, Atomos.DIV.value,
-                 Atomos.MOD.value, Atomos.AND.value]):
+        while (self.lookahead.tipo in [Atomos.MULOP.value, Atomos.DIV.value, Atomos.MOD.value, Atomos.AND.value]):
             self.operador_de_multiplicacao()
             self.fator()
-        if (self.op in [Atomos.MULOP_DIVI.value, Atomos.MULOP_MULT.value, Atomos.MOD.value,
-                        Atomos.AND.value, Atomos.DIV.value]):
             match (self.op):
                 case (Atomos.MULOP_DIVI.value):
                     print("DIVI")

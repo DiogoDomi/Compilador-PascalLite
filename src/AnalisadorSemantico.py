@@ -1,4 +1,4 @@
-from Atomo import Atomo
+from .Atomo import Atomo
 #import sys
 
 class AnalisadorSemantico:
@@ -11,10 +11,7 @@ class AnalisadorSemantico:
     # o lexema (variável) existe e se está
     # presenta na tabela de símbolos
     def variavel_existe(self, atomo: Atomo):
-        for value in self.tabela.values():
-            if (value == atomo.lexema):
-                return True
-        return False
+        return atomo.lexema in self.tabela
 
     # Método responsável por adicionar a
     # variável na tabela de símbolos, 
@@ -22,7 +19,7 @@ class AnalisadorSemantico:
     # acordo com a ordem de declaração
     def armazenar_variavel(self, atomo: Atomo):
         if (not self.variavel_existe(atomo)):
-            self.tabela[self.endereco] = atomo.lexema
+            self.tabela[atomo.lexema] = self.endereco
             self.endereco += 1
             return True
         return False
@@ -34,12 +31,8 @@ class AnalisadorSemantico:
     # do lexema (variável) na tabela a partir
     # do valor
     def buscar_endereco(self, atomo: Atomo):
-        for key, value in self.tabela.items():
-            if (value == atomo.lexema):
-                return key
-        return None
+        return self.tabela.get(atomo.lexema)
 
     def proximo_rotulo(self):
         self.rotulo += 1
         return self.rotulo
-

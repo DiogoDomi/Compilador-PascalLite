@@ -1,5 +1,5 @@
-from Atomos import Atomos
-from Atomo import Atomo
+from .Atomos import Atomos
+from .Atomo import Atomo
 
 # Dicionario para relacionar a string da palavra reservada
 # que irá aparecer no analisador com o valor definido
@@ -155,16 +155,19 @@ class AnalisadorLexico:
                     else:
                         estado = 8
                 case 3:
+                    self.retrair()
                     return Atomo(Atomos.RELOP.value, lexema, 0, Atomos.RELOP_EQ.value, self.linha)
                 case 4:
                     return Atomo(Atomos.RELOP.value, lexema, 0, Atomos.RELOP_LE.value, self.linha)
                 case 5:
                     return Atomo(Atomos.RELOP.value, lexema, 0, Atomos.RELOP_NE.value, self.linha)
                 case 6:
+                    self.retrair()
                     return Atomo(Atomos.RELOP.value, lexema, 0, Atomos.RELOP_LT.value, self.linha)
                 case 7:
                     return Atomo(Atomos.RELOP.value, lexema, 0, Atomos.RELOP_GE.value, self.linha)
                 case 8:
+                    self.retrair()
                     return Atomo(Atomos.RELOP.value, lexema, 0, Atomos.RELOP_GT.value, self.linha)
 
     # Declaração do metodo tratar_operador_de_adicao, onde iremos
@@ -275,12 +278,20 @@ class AnalisadorLexico:
                         return self.proximo_atomo()
                     elif (char == "\n"):
                         self.linha += 1
+                    elif (char == "\0"):
+                        return Atomo(Atomos.ERRO.value, "", 0, 0, self.linha)
                 case 2:
                     char = self.proximo_char()
-                    if (char == "*" and self.proximo_char() == ")"):
-                        return self.proximo_atomo()
+                    if (char == "*"):
+                        prox = self.proximo_char()
+                        if (prox == ")"):
+                            return self.proximo_atomo()
+                        else:
+                            self.retrair()
                     elif (char == "\n"):
                         self.linha += 1
+                    elif (char == "\0"):
+                        return Atomo(Atomos.ERRO.value, "", 0, 0, self.linha)
                 case 3:
                     char = self.proximo_char()
                     if (char == "\n" or char == "\0"):

@@ -1,25 +1,13 @@
-from AnalisadorLexico import AnalisadorLexico
-from AnalisadorSintatico import AnalisadorSintatico
-from AnalisadorSemantico import AnalisadorSemantico
+from src.AnalisadorLexico import AnalisadorLexico
+from src.AnalisadorSintatico import AnalisadorSintatico
+from src.AnalisadorSemantico import AnalisadorSemantico
 import sys
-
-# Definindo mensagens que irão aparecer para 
-# cada tipo de atomo ao rodar o programa
-atomo_message = [
-        "ERRO", "EOS", "BEGIN", "BOOLEAN", "DIV", "DO",
-        "ELSE", "END", "FALSE", "IF", "INTEGER", "MOD",
-        "PROGRAM", "READ", "THEN", "TRUE", "NOT", "VAR",
-        "WHILE", "WRITE", "IDENTIF", "NUM", "ATRIB", 
-        "PONT_VIRG", "DOIS_PONTOS", "VIRGULA", "PONTO",
-        "RELOP", "ADDOP", "MULOP", "OR", "AND", "PAR_ESQ",
-        "PAR_DIR", "COMENTARIO"
-        ]
 
 def ler_arquivo():
     if len(sys.argv) > 1:
         nome_arquivo = sys.argv[1]
     else:
-        nome_arquivo = "TestesDeExemplo/teste11.pas"
+        nome_arquivo = "examples/teste11.pas"
 
     arquivo = open(nome_arquivo)
     buffer = arquivo.read()
