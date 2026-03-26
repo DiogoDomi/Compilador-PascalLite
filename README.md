@@ -39,26 +39,31 @@ Clone o repositório e execute o compilador passando o arquivo fonte como argume
 
 ```bash
 # Clonar o repositório
-git clone [https://github.com/DiogoDomi/pascallite-compiler.git](https://github.com/DiogoDomi/pascallite-compiler.git)
+git clone https://github.com/DiogoDomi/pascallite-compiler.git
 cd pascallite-compiler
 
 # Executar o compilador com um arquivo de teste
-python main.py examples/teste1.pas
+python main.py examples/teste3.pas
 ```
 *(Nota: Se executado sem argumentos, o `main.py` buscará um arquivo de teste padrão).*
 
 ## 📝 Exemplo de Código (PascalLite)
 
-**Entrada (`teste1.pas`):**
+**Entrada (`teste3.pas`):**
 ```pascal
-program somaDoisNumeros;
+program calculaFatorial;
 var
-  num1, num2, resultado: integer;
+  num, fatorial, contador: integer;
 begin
-  read(num1);
-  read(num2);
-  resultado := num1 + num2;
-  write(resultado);
+  read(num);
+  fatorial := 1;
+  contador := 1;
+  while contador <= num do
+  begin
+    fatorial := fatorial * contador;
+    contador := contador + 1;
+  end;
+  write(fatorial);
 end.
 ```
 
